@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>今天吃什麼？ | Food Decider</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header / Navigation -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-utensils"></i>
+                <h1>Food Decider</h1>
+            </div>
+
+            <div class="mode-switch">
+                <span class="mode-label active" id="mode-category">靈感</span>
+                <div class="toggle-container" id="mode-toggle">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-thumb"></div>
+                </div>
+                <span class="mode-label" id="mode-restaurant">探索</span>
+            </div>
+
+            <button id="settings-btn" class="icon-btn" aria-label="設定">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </header>
+
+        <!-- Category Selector (For Inspiration Mode) -->
+        <nav class="category-nav" id="category-nav">
+            <button class="cat-btn active" data-cat="breakfast">早餐</button>
+            <button class="cat-btn" data-cat="lunch">午餐</button>
+            <button class="cat-btn" data-cat="dinner">晚餐</button>
+            <button class="cat-btn" data-cat="latenight">宵夜</button>
+        </nav>
+
+        <!-- Search Bar (For Restaurant Mode) -->
+        <div class="search-bar-container hidden" id="search-bar-container">
+            <div class="input-group">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" id="location-input" placeholder="例如：台北車站" value="附近">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="keyword-input" placeholder="想吃什麼？(例如：拉麵)">
+            </div>
+            <button id="search-btn" class="primary-btn">搜尋</button>
+        </div>
+
+        <!-- Main Card Area -->
+        <main class="card-area">
+            <div class="card-stack" id="card-stack">
+                <!-- Cards will be injected here via JS -->
+                <div class="card placeholder-card">
+                    <div class="card-content">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <h3>準備中...</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-controls">
+                <button class="control-btn reject-btn" id="reject-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button class="control-btn accept-btn" id="accept-btn">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+            </div>
+        </main>
+
+        <!-- Shortlist Bar -->
+        <div class="shortlist-bar closed" id="shortlist-bar">
+            <div class="shortlist-header" id="shortlist-toggle">
+                <span class="count-badge" id="shortlist-count">0</span>
+                <span>候選名單</span>
+                <i class="fa-solid fa-chevron-up toggle-icon"></i>
+            </div>
+            <div class="shortlist-content">
+                <ul class="shortlist-items" id="shortlist-items">
+                    <!-- Shortlist items here -->
+                </ul>
+                <button class="decide-btn" id="decide-btn" disabled>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    幫我決定！
+                </button>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal hidden" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>設定</h2>
+                    <button class="close-btn" id="close-settings"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-group">
+                        <label>Google Maps API Key</label>
+                        <p class="setting-desc">用於「探索模式」抓取真實店家資料。</p>
+                        <input type="password" id="api-key-input" placeholder="AIzaSy...">
+                    </div>
+                    <div class="setting-group">
+                        <label>搜尋卡片數量限制</label>
+                        <p class="setting-desc">每次搜尋顯示的結果數量 (預設 6)。</p>
+                        <input type="number" id="limit-input" value="6" min="1" max="20">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="primary-btn" id="save-settings">儲存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Modal -->
+        <div class="modal result-modal hidden" id="result-modal">
+            <div class="modal-content result-content">
+                <div class="confetti-container" id="confetti-container"></div>
+                <h2 class="result-title">今晚就吃這個！</h2>
+                <div class="result-card" id="result-card">
+                    <!-- Result content -->
+                </div>
+                <div class="result-actions">
+                    <button class="secondary-btn" id="retry-btn">重抽</button>
+                    <button class="primary-btn" id="go-btn">
+                        <i class="fa-brands fa-google"></i> 帶我去
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
