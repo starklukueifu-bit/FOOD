@@ -21,9 +21,8 @@ let state = {
     mode: CONSTANTS.MODES.CATEGORY,
     currentCategory: CONSTANTS.CATEGORIES.LUNCH,
     apiKey: localStorage.getItem('google_places_api_key') || '',
-    searchLimit: parseInt(localStorage.getItem('search_limit')) || 6,
-    // 新增：靈感模式限制，預設 6
-    inspirationLimit: parseInt(localStorage.getItem('inspiration_limit')) || 6,
+    searchLimit: parseInt(localStorage.getItem('search_limit')) || 6,      // 探索模式用
+    inspirationLimit: parseInt(localStorage.getItem('inspiration_limit')) || 6, // 靈感模式用
     shortlist: [],
     cardQueue: [],
     swiping: false
@@ -240,18 +239,18 @@ function loadCategory(category) {
     } else {
         state.currentCategory = category;
 
-        // --- 修改部分：從 20 項資料中隨機抽取 N 項 ---
-        const allItems = [...CATEGORY_DATA[category]];
+        // --- 修改點：加入數量限制與隨機挑選 ---
+        let allItems = [...CATEGORY_DATA[category]];
 
-        // 使用 Fisher-Yates 洗牌演算法
+        // 隨機洗牌 (Fisher-Yates Shuffle)
         for (let i = allItems.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [allItems[i], allItems[j]] = [allItems[j], allItems[i]];
         }
 
-        // 根據設定的 inspirationLimit 取出前 N 項
+        // 根據 state.searchLimit 進行切片
         state.cardQueue = allItems.slice(0, state.inspirationLimit);
-        // ------------------------------------------
+        // -----------------------------------
 
         renderStack();
     }
@@ -586,8 +585,13 @@ function saveSettings() {
     const limit = parseInt(elements.limitInput.value) || 6;
     const insLimit = parseInt(elements.inspirationLimitInput.value) || 6;
 
+    // --- 修正處：確保兩個數值都存入 state ---
     state.searchLimit = limit;
+    state.inspirationLimit = insLimit;
+
+    // --- 修正處：確保兩個數值都存入 localStorage ---
     localStorage.setItem('search_limit', limit);
+    localStorage.setItem('inspiration_limit', insLimit);
 
     if (key) {
         localStorage.setItem('google_places_api_key', key);
@@ -597,8 +601,10 @@ function saveSettings() {
     } else {
         localStorage.removeItem('google_places_api_key');
         state.apiKey = '';
-        alert('API Key 已清除 (數量限制已儲存)。');
+        alert('數量限制已儲存！');
         toggleModal(elements.settingsModal, false);
+        // 新增：手動觸發重新載入，讓畫面立刻反映 10 張牌
+        loadCategory(state.currentCategory);
     }
 }
 
