@@ -114,10 +114,17 @@
                         <p class="setting-desc">用於「探索模式」抓取真實店家資料。</p>
                         <input type="password" id="api-key-input" placeholder="AIzaSy...">
                     </div>
+
                     <div class="setting-group">
-                        <label>搜尋卡片數量限制</label>
-                        <p class="setting-desc">每次搜尋顯示的結果數量 (預設 6)。</p>
+                        <label>探索模式：卡片數量限制</label>
+                        <p class="setting-desc">搜尋真實餐廳時顯示的結果數量 (1-20)。</p>
                         <input type="number" id="limit-input" value="6" min="1" max="20">
+                    </div>
+
+                    <div class="setting-group">
+                        <label>靈感模式：隨機卡片數量</label>
+                        <p class="setting-desc">切換類別時，從題庫隨機抽取的數量 (1-20)。</p>
+                        <input type="number" id="inspiration-limit-input" value="6" min="1" max="20">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -21,7 +21,9 @@ let state = {
     mode: CONSTANTS.MODES.CATEGORY,
     currentCategory: CONSTANTS.CATEGORIES.LUNCH,
     apiKey: localStorage.getItem('google_places_api_key') || '',
-    searchLimit: parseInt(localStorage.getItem('search_limit')) || 6, // Default 6
+    searchLimit: parseInt(localStorage.getItem('search_limit')) || 6,
+    // 新增：靈感模式限制，預設 6
+    inspirationLimit: parseInt(localStorage.getItem('inspiration_limit')) || 6,
     shortlist: [],
     cardQueue: [],
     swiping: false
@@ -49,6 +51,7 @@ const elements = {
     shortlistCount: document.getElementById('shortlist-count'),
     shortlistItems: document.getElementById('shortlist-items'),
     decideBtn: document.getElementById('decide-btn'),
+    inspirationLimitInput: document.getElementById('inspiration-limit-input'),
     // Controls
     rejectBtn: document.getElementById('reject-btn'),
     acceptBtn: document.getElementById('accept-btn'),
@@ -69,7 +72,15 @@ const CATEGORY_DATA = {
         { id: 'b9', name: '小籠包', icon: 'fa-dumpling' },
         { id: 'b10', name: '蘿蔔糕', icon: 'fa-square' },
         { id: 'b11', name: '米粉湯', icon: 'fa-bowl-rice' },
-        { id: 'b12', name: '三明治', icon: 'fa-sandwich' }
+        { id: 'b12', name: '三明治', icon: 'fa-sandwich' },
+        { id: 'b13', name: '厚片吐司', icon: 'fa-bread-slice' },
+        { id: 'b14', name: '廣東粥', icon: 'fa-bowl-food' },
+        { id: 'b15', name: '生菜沙拉', icon: 'fa-leaf' },
+        { id: 'b16', name: '貝果', icon: 'fa-ring' },
+        { id: 'b17', name: '鬆餅', icon: 'fa-stroopwafel' },
+        { id: 'b18', name: '鹹粥', icon: 'fa-bowl-rice' },
+        { id: 'b19', name: '水煎包', icon: 'fa-circle' },
+        { id: 'b20', name: '燕麥杯', icon: 'fa-glass-water' }
     ],
     lunch: [
         { id: 'l1', name: '牛肉麵', icon: 'fa-bowl-food' },
@@ -85,7 +96,13 @@ const CATEGORY_DATA = {
         { id: 'l11', name: '涼麵', icon: 'fa-bacon' },
         { id: 'l12', name: '鍋貼', icon: 'fa-dumpling' },
         { id: 'l13', name: '素食', icon: 'fa-leaf' },
-        { id: 'l14', name: '速食', icon: 'fa-burger' }
+        { id: 'l14', name: '速食', icon: 'fa-burger' },
+        { id: 'l15', name: '海南雞飯', icon: 'fa-drumstick-bite' },
+        { id: 'l16', name: '丼飯', icon: 'fa-bowl-rice' },
+        { id: 'l17', name: '炒麵/炒飯', icon: 'fa-fire' },
+        { id: 'l18', name: '越式河粉', icon: 'fa-bowl-food' },
+        { id: 'l19', name: '輕食餐盒', icon: 'fa-leaf' },
+        { id: 'l20', name: '麻醬麵', icon: 'fa-bowl-food' }
     ],
     dinner: [
         { id: 'd1', name: '火鍋', icon: 'fa-fire-burner' },
@@ -100,7 +117,14 @@ const CATEGORY_DATA = {
         { id: 'd10', name: '熱炒', icon: 'fa-fire-burner' },
         { id: 'd11', name: '麻辣鍋', icon: 'fa-pepper-hot' },
         { id: 'd12', name: '羊肉爐', icon: 'fa-fire' },
-        { id: 'd13', name: '薑母鴨', icon: 'fa-bowl-food' }
+        { id: 'd13', name: '薑母鴨', icon: 'fa-bowl-food' },
+        { id: 'd14', name: '港式飲茶', icon: 'fa-shrimp' },
+        { id: 'd15', name: '酸菜魚', icon: 'fa-fish' },
+        { id: 'd16', name: '石鍋拌飯', icon: 'fa-bowl-rice' },
+        { id: 'd17', name: '串燒組合', icon: 'fa-fire' },
+        { id: 'd18', name: '烤鴨三吃', icon: 'fa-drumstick-bite' },
+        { id: 'd19', name: '新加坡料理', icon: 'fa-plate-wheat' },
+        { id: 'd20', name: '美式排餐', icon: 'fa-utensils' }
     ],
     latenight: [
         { id: 'n1', name: '鹹酥雞', icon: 'fa-thumbs-up' },
@@ -112,7 +136,17 @@ const CATEGORY_DATA = {
         { id: 'n7', name: '麥當勞', icon: 'fa-burger' },
         { id: 'n8', name: '雞排', icon: 'fa-drumstick-bite' },
         { id: 'n9', name: '甜不辣', icon: 'fa-bowl-food' },
-        { id: 'n10', name: '關東煮', icon: 'fa-mug-hot' }
+        { id: 'n10', name: '關東煮', icon: 'fa-mug-hot' },
+        { id: 'n11', name: '東山鴨頭', icon: 'fa-drumstick-bite' },
+        { id: 'n12', name: '炭烤吐司', icon: 'fa-bread-slice' },
+        { id: 'n13', name: '涼麵', icon: 'fa-bacon' },
+        { id: 'n14', name: '臭豆腐', icon: 'fa-square' },
+        { id: 'n15', name: '蚵仔麵線', icon: 'fa-bowl-food' },
+        { id: 'n16', name: '章魚燒', icon: 'fa-circle' },
+        { id: 'n17', name: '藥燉排骨', icon: 'fa-bowl-food' },
+        { id: 'n18', name: '胡椒餅', icon: 'fa-cookie-bite' },
+        { id: 'n19', name: '燒仙草/豆花', icon: 'fa-bowl-rice' },
+        { id: 'n20', name: '炸銀絲卷', icon: 'fa-bread-slice' }
     ]
 };
 
@@ -122,9 +156,13 @@ function init() {
     loadCategory(state.currentCategory);
     updateShortlistUI();
 
-    // Load saved settings
+    // 加載儲存的設定到 UI
     if (state.apiKey) elements.apiKeyInput.value = state.apiKey;
     elements.limitInput.value = state.searchLimit;
+    // 新增：讀取靈感限制到 input
+    if (elements.inspirationLimitInput) {
+        elements.inspirationLimitInput.value = state.inspirationLimit;
+    }
 }
 
 // Event Listeners
@@ -196,13 +234,25 @@ function toggleMode() {
 // Logic: Load Category
 function loadCategory(category) {
     if (state.mode === CONSTANTS.MODES.RESTAURANT) {
-        // If in restaurant mode, clicking category sets keyword and searches
         const catName = document.querySelector(`.cat-btn[data-cat="${category}"]`).innerText;
         document.getElementById('keyword-input').value = catName;
         executeGoogleSearch();
     } else {
         state.currentCategory = category;
-        state.cardQueue = [...CATEGORY_DATA[category]];
+
+        // --- 修改部分：從 20 項資料中隨機抽取 N 項 ---
+        const allItems = [...CATEGORY_DATA[category]];
+
+        // 使用 Fisher-Yates 洗牌演算法
+        for (let i = allItems.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allItems[i], allItems[j]] = [allItems[j], allItems[i]];
+        }
+
+        // 根據設定的 inspirationLimit 取出前 N 項
+        state.cardQueue = allItems.slice(0, state.inspirationLimit);
+        // ------------------------------------------
+
         renderStack();
     }
 }
@@ -534,6 +584,7 @@ function toggleModal(modal, show) {
 function saveSettings() {
     const key = elements.apiKeyInput.value.trim();
     const limit = parseInt(elements.limitInput.value) || 6;
+    const insLimit = parseInt(elements.inspirationLimitInput.value) || 6;
 
     state.searchLimit = limit;
     localStorage.setItem('search_limit', limit);
